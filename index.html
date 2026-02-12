@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weighted GPA Calculator</title>
+
+
+<style>
+* { box-sizing: border-box; }
+
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    width: 95%;
+    max-width: 700px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+
+h1 { text-align:center; }
+
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0 14px 0;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+
+button {
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #667eea;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+
+.controls button { flex: 1; }
+
+
+.class-box {
+    background: #f7f7fb;
+    padding: 18px;
+    border-radius: 14px;
+    margin-top: 15px;
+    position: relative;
+}
+
+
+.remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff5c5c;
+    padding: 6px 10px;
+    font-size: 14px;
+}
+
+
+#result {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #667eea;
+}
+</style>
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>🎓 Weighted GPA Calculator</h1>
+
+
+<div class="controls">
+<button onclick="addClass()">+ Add Class</button>
+<button onclick="calculateGPA()">Calculate GPA</button>
+</div>
+
+
+<div id="classesContainer"></div>
+
+
+<div id="result"></div>
+
+
+</div>
+
+
+<script>
+
+
+const gradeScale = {
+    "A":[4.333,4.667,5.000],
+    "A-":[4.000,4.333,4.667],
+    "B+":[3.667,4.000,4.333],
+    "B":[3.333,3.667,4.000],
+    "B-":[3.000,3.333,3.667],
+    "C+":[2.667,3.000,3.333],
+    "C":[2.333,2.667,3.000],
+    "C-":[2.000,2.333,2.667],
+    "D+":[1.667,2.000,2.333],
+    "D":[1.333,1.667,2.000],
+    "D-":[1.000,1.333,1.667],
+    "F":[0,0,0]
+};
+
+
+let classCount = 0;
+
+
+// add class card
+function addClass() {
+    classCount++;
+    const container = document.getElementById("classesContainer");
+
+
+    const classDiv = document.createElement("div");
+    classDiv.className = "class-box";
+
+
+    classDiv.innerHTML = `
+        <button class="remove-btn" onclick="removeClass(this)">Remove</button>
+        <h3>Class ${classCount}</h3>
+
+
+        <label>Grade</label>
+        <select class="grade">
+            <option>A</option><option>A-</option>
+            <option>B+</option><option>B</option><option>B-</option>
+            <option>C+</option><option>C</option><option>C-</option>
+            <option>D+</option><option>D</option><option>D-</option>
+            <option>F</option>
+        </select>
+
+
+        <label>Level</label>
+        <select class="level">
+            <option>CP</option>
+            <option>A/B</option>
+            <option>ACC</option>
+            <option>AP</option>
+        </select>
+
+
+        <label>Credits</label>
+        <input type="number" class="credits" step="0.1" placeholder="Example: 5.0">
+    `;
+
+
+    container.appendChild(classDiv);
+}
+
+
+// remove class card
+function removeClass(button) {
+    button.parentElement.remove();
+}
+
+
+// calculate GPA
+function calculateGPA() {
+    const grades = document.querySelectorAll(".grade");
+    const levels = document.querySelectorAll(".level");
+    const credits = document.querySelectorAll(".credits");
+
+
+    let totalPoints = 0;
+    let totalCredits = 0;
+
+
+    for (let i = 0; i < grades.length; i++) {
+        const grade = grades[i].value;
+        const level = levels[i].value;
+        const credit = parseFloat(credits[i].value);
+
+
+        if (!gradeScale[grade] || isNaN(credit)) continue;
+
+
+        let gpaValue;
+
+
+        switch(level) {
+            case "CP": gpaValue = gradeScale[grade][0]; break;
+            case "A/B":
+            case "ACC": gpaValue = gradeScale[grade][1]; break;
+            case "AP": gpaValue = gradeScale[grade][2]; break;
+            default: continue;
+        }
+
+
+        totalPoints += gpaValue * credit;
+        totalCredits += credit;
+    }
+
+
+    if (totalCredits === 0) {
+        document.getElementById("result").innerText = "Enter valid data.";
+        return;
+    }
+
+
+    document.getElementById("result").innerText =
+        "Your Weighted GPA: " + (totalPoints/totalCredits).toFixed(3);
+}
+
+
+// start with one class automatically
+addClass();
+
+
+</script>
+
+
+</body>
+</html>
+
+
+
