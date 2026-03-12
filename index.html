@@ -90,6 +90,22 @@ font-size: 24px;
 font-weight: bold;
 color: #667eea;
 }
+
+.feedback-box {
+margin-top: 30px;
+padding: 20px;
+background: #f7f7fb;
+border-radius: 14px;
+text-align: center;
+}
+
+.feedback-box h3 {
+margin-top: 0;
+}
+
+.feedback-box a button {
+margin-top: 10px;
+}
 </style>
 </head>
 
@@ -107,6 +123,16 @@ color: #667eea;
 <div id="classesContainer"></div>
 
 <div id="result"></div>
+
+<div class="feedback-box">
+<h3>💬 Feedback</h3>
+<p>If you have suggestions or found a bug, please let us know!</p>
+
+<a href="https://docs.google.com/forms/d/e/1FAIpQLSeeDb2xZlBIQ2Uwe0vm8dcaJPsQYEn7MlQnewtWo7SRFpirlQ/viewform?usp=header" target="_blank">
+<button>Give Feedback</button>
+</a>
+
+</div>
 
 </div>
 
@@ -142,42 +168,31 @@ classDiv.className = "class-box";
 classDiv.innerHTML = `
 <button class="remove-btn" onclick="removeClass(this)">Remove</button>
 
-<h3>Class ${classCount}</h3>
+<label>Class Name</label>
+<input type="text" class="classname" placeholder="Example: Biology">
 
 <label>Grade</label>
-
 <select class="grade">
-
 <option>A</option><option>A-</option>
-
 <option>B+</option><option>B</option><option>B-</option>
-
 <option>C+</option><option>C</option><option>C-</option>
-
 <option>D+</option><option>D</option><option>D-</option>
-
 <option>F</option>
-
 </select>
 
 <label>Level</label>
-
 <select class="level">
-
 <option>CPB</option>
-
 <option>CPA</option>
-
 <option>ACC</option>
-
 <option>AP</option>
-
 </select>
 
 <label>Credits</label>
-
-<input type="number" class="credits" step="0.1" placeholder="Example: 5.0">
-
+<select class="credits">
+<option value="5">5</option>
+<option value="2.5">2.5</option>
+</select>
 `;
 
 container.appendChild(classDiv);
@@ -185,29 +200,22 @@ container.appendChild(classDiv);
 }
 
 function removeClass(button) {
-
 button.parentElement.remove();
-
 }
 
 function calculateGPA() {
 
 const grades = document.querySelectorAll(".grade");
-
 const levels = document.querySelectorAll(".level");
-
 const credits = document.querySelectorAll(".credits");
 
 let totalPoints = 0;
-
 let totalCredits = 0;
 
 for (let i = 0; i < grades.length; i++) {
 
 const grade = grades[i].value;
-
 const level = levels[i].value;
-
 const credit = parseFloat(credits[i].value);
 
 if (!gradeScale[grade] || isNaN(credit)) continue;
@@ -235,17 +243,13 @@ continue;
 }
 
 totalPoints += gpaValue * credit;
-
 totalCredits += credit;
 
 }
 
 if (totalCredits === 0) {
-
 document.getElementById("result").innerText = "Enter valid data.";
-
 return;
-
 }
 
 document.getElementById("result").innerText =
@@ -258,5 +262,4 @@ addClass();
 </script>
 
 </body>
-
 </html>
